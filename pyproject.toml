@@ -1,6 +1,6 @@
 [project]
-name = "jarvisbot"
-version = "0.1.0"
+name = "jarvisbot-python"
+version = "1.13.3"
 description = "The official Python library for the JarvisBot API"
 readme = "README.md"
 license = "Apache-2.0"
