@@ -1,0 +1,292 @@
+# File generated from our OpenAPI spec by Stainless.
+
+from __future__ import annotations
+
+from typing import Dict, List, Union, Iterable, Optional
+from typing_extensions import Literal, Required, TypedDict
+
+from ...types import shared_params
+from .chat_completion_tool_param import ChatCompletionToolParam
+from .chat_completion_message_param import ChatCompletionMessageParam
+from .chat_completion_tool_choice_option_param import ChatCompletionToolChoiceOptionParam
+from .chat_completion_function_call_option_param import ChatCompletionFunctionCallOptionParam
+
+__all__ = [
+    "CompletionCreateParamsBase",
+    "FunctionCall",
+    "Function",
+    "ResponseFormat",
+    "CompletionCreateParamsNonStreaming",
+    "CompletionCreateParamsStreaming",
+]
+
+
+class CompletionCreateParamsBase(TypedDict, total=False):
+    prompt: Optional[str]
+    """
+    """
+
+    batch_size: Optional[int]
+    """
+    """
+
+    messages: Required[Iterable[ChatCompletionMessageParam]]
+    """A list of messages comprising the conversation so far.
+    """
+
+    functions: Iterable[Function]
+    """Deprecated in favor of `tools`.
+
+    A list of functions the model may generate JSON inputs for.
+    """
+
+    function_call: FunctionCall
+    """Deprecated in favor of `tool_choice`.
+
+    Controls which (if any) function is called by the model. `none` means the model
+    will not call a function and instead generates a message. `auto` means the model
+    can pick between generating a message or calling a function. Specifying a
+    particular function via `{"name": "my_function"}` forces the model to call that
+    function.
+
+    `none` is the default when no functions are present. `auto` is the default if
+    functions are present.
+    """
+
+    tools: Iterable[ChatCompletionToolParam]
+    """A list of tools the model may call.
+
+    Currently, only functions are supported as a tool. Use this to provide a list of
+    functions the model may generate JSON inputs for.
+    """
+
+    tool_choice: ChatCompletionToolChoiceOptionParam
+    """
+    Controls which (if any) function is called by the model. `none` means the model
+    will not call a function and instead generates a message. `auto` means the model
+    can pick between generating a message or calling a function. Specifying a
+    particular function via
+    `{"type": "function", "function": {"name": "my_function"}}` forces the model to
+    call that function.
+
+    `none` is the default when no functions are present. `auto` is the default if
+    functions are present.
+    """
+
+    max_tokens: Optional[int]
+    """
+    The maximum number of [tokens](/tokenizer) that can be generated in the chat
+    completion.
+
+    The total length of input tokens and generated tokens is limited by the model's
+    context length.
+    for counting tokens.
+    """
+
+    temperature: Optional[float]
+    """What sampling temperature to use, between 0 and 2.
+
+    Higher values like 0.8 will make the output more random, while lower values like
+    0.2 will make it more focused and deterministic.
+
+    We generally recommend altering this or `top_p` but not both.
+    """
+
+    top_p: Optional[float]
+    """
+    An alternative to sampling with temperature, called nucleus sampling, where the
+    model considers the results of the tokens with top_p probability mass. So 0.1
+    means only the tokens comprising the top 10% probability mass are considered.
+
+    We generally recommend altering this or `temperature` but not both.
+    """
+
+    min_p: Optional[float]
+    """
+    Sets a minimum base probability threshold for token selection.
+
+    The Min-P sampling method was designed as an alternative to Top-P, and aims to ensure 
+    a balance of quality and variety. The parameter min_p represents the minimum probability 
+    for a token to be considered, relative to the probability of the most likely token. 
+    For example, with min_p=0.05 and the most likely token having a probability of 0.9, 
+    logits with a value less than 0.045 are filtered out.
+    """
+
+    stop: Union[Optional[str], List[str]]
+    """Up to 4 sequences where the API will stop generating further tokens."""
+
+    presence_penalty: Optional[float]
+    """Number between -2.0 and 2.0.
+
+    Positive values penalize new tokens based on whether they appear in the text so
+    far, increasing the model's likelihood to talk about new topics.
+
+    """
+
+    frequency_penalty: Optional[float]
+    """Number between -2.0 and 2.0.
+
+    Positive values penalize new tokens based on their existing frequency in the
+    text so far, decreasing the model's likelihood to repeat the same line verbatim.
+    """
+
+    logit_bias: Optional[Dict[str, int]]
+    """Modify the likelihood of specified tokens appearing in the completion.
+
+    Accepts a JSON object that maps tokens (specified by their token ID in the
+    tokenizer) to an associated bias value from -100 to 100. Mathematically, the
+    bias is added to the logits generated by the model prior to sampling. The exact
+    effect will vary per model, but values between -1 and 1 should decrease or
+    increase likelihood of selection; values like -100 or 100 should result in a ban
+    or exclusive selection of the relevant token.
+    """
+
+    seed: Optional[int]
+    """
+    This feature is in Beta. If specified, our system will make a best effort to
+    sample deterministically, such that repeated requests with the same `seed` and
+    parameters should return the same result. Determinism is not guaranteed, and you
+    should refer to the `system_fingerprint` response parameter to monitor changes
+    in the backend.
+    """
+
+    response_format: ResponseFormat
+    """An object specifying the format that the model must output.
+
+    Setting to `{ "type": "json_object" }` enables JSON mode, which guarantees the
+    message the model generates is valid JSON.
+
+    **Important:** when using JSON mode, you **must** also instruct the model to
+    produce JSON yourself via a system or user message. Without this, the model may
+    generate an unending stream of whitespace until the generation reaches the token
+    limit, resulting in a long-running and seemingly "stuck" request. Also note that
+    the message content may be partially cut off if `finish_reason="length"`, which
+    indicates the generation exceeded `max_tokens` or the conversation exceeded the
+    max context length.
+    """
+
+    model: Optional[str]
+    """ID of the model to use.
+
+    See the
+    table for details on which models work with the Chat API.
+    """
+
+    n: Optional[int]
+    """How many chat completion choices to generate for each input message.
+
+    Note that you will be charged based on the number of generated tokens across all
+    of the choices. Keep `n` as `1` to minimize costs.
+    """
+
+    user: Optional[str]
+    """
+    A unique identifier representing your end-user, which can help Jarvisbot to monitor
+    and detect abuse.
+    """
+
+    top_k: Optional[int]
+    """
+    Limit the next token selection to the K most probable tokens.
+
+    Top-k sampling is a text generation method that selects the next token only 
+    from the top k most likely tokens predicted by the model. It helps reduce the 
+    risk of generating low-probability or nonsensical tokens, but it may also limit 
+    the diversity of the output. A higher value for top_k (e.g., 100) will consider
+     more tokens and lead to more diverse text, while a lower value (e.g., 10) will 
+     focus on the most probable tokens and generate more conservative text.
+    """
+
+    repeat_penalty: Optional[int]
+    """
+    A penalty applied to each token that is already generated. This helps prevent the 
+    model from repeating itself.
+
+    Repeat penalty is a hyperparameter used to penalize the repetition of token sequences 
+    during text generation. It helps prevent the model from generating repetitive or monotonous 
+    text. A higher value (e.g., 1.5) will penalize repetitions more strongly, while a lower 
+    value (e.g., 0.9) will be more lenient.
+    """
+
+    logit_bias_type: Optional[str]
+    """
+    """
+
+    mirostat_model: Optional[int]
+    """
+    Enable Mirostat constant-perplexity algorithm of the specified version (1 or 2; 0 = disabled)
+    """
+
+    mirostat_tau: Optional[float]
+    """
+    Mirostat target entropy, i.e. the target perplexity - lower values produce focused and coherent 
+    text, larger values produce more diverse and less coherent text
+    """
+
+    mirostat_eta: Optional[float]
+    """
+    Mirostat learning rate
+    """
+
+    grammer: Optional[str]
+    """
+    """
+
+
+FunctionCall = Union[Literal["none", "auto"], ChatCompletionFunctionCallOptionParam]
+
+
+class Function(TypedDict, total=False):
+    name: Required[str]
+    """The name of the function to be called.
+
+    Must be a-z, A-Z, 0-9, or contain underscores and dashes, with a maximum length
+    of 64.
+    """
+
+    description: str
+    """
+    A description of what the function does, used by the model to choose when and
+    how to call the function.
+    """
+
+    parameters: shared_params.FunctionParameters
+    """The parameters the functions accepts, described as a JSON Schema object.
+
+    See the
+    for examples, and the
+    [JSON Schema reference](https://json-schema.org/understanding-json-schema/) for
+    documentation about the format.
+
+    Omitting `parameters` defines a function with an empty parameter list.
+    """
+
+
+class ResponseFormat(TypedDict, total=False):
+    type: Literal["text", "json_object"]
+    """Must be one of `text` or `json_object`."""
+
+
+class CompletionCreateParamsNonStreaming(CompletionCreateParamsBase):
+    stream: Optional[Literal[False]]
+    """If set, partial message deltas will be sent, like in ChatGPT.
+
+    Tokens will be sent as data-only
+    [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format)
+    as they become available, with the stream terminated by a `data: [DONE]`
+    message.
+    """
+
+
+class CompletionCreateParamsStreaming(CompletionCreateParamsBase):
+    stream: Required[Literal[True]]
+    """If set, partial message deltas will be sent, like in ChatGPT.
+
+    Tokens will be sent as data-only
+    [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format)
+    as they become available, with the stream terminated by a `data: [DONE]`
+    message.
+    """
+
+
+CompletionCreateParams = Union[CompletionCreateParamsNonStreaming, CompletionCreateParamsStreaming]
